@@ -25,133 +25,106 @@ Display the original and all transformed images with appropriate titles using ma
 ## Program:
 ## Developed By: SUJITHRA K
 ## Register Number:212223040212
+```
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+image = cv2.imread('/content/flower.jpg')
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title("Original Image")
+plt.axis('off')
+```
 
 i)Image Translation
 ```
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-input_image=cv2.imread("flower.jpg")
-input_image=cv2.cvtColor(input_image,cv2.COLOR_BGR2RGB)
+tx, ty = 100, 50
+M_translation = np.float32([[1, 0, tx], [0, 1, ty]])
+# [1, 0, tx] - Horizontal shift by tx
+# [0, 1, ty] - Vertical shift by ty
+translated_image = cv2.warpAffine(image, M_translation, (image.shape[1], image.shape[0]))
+plt.imshow(cv2.cvtColor(translated_image, cv2.COLOR_BGR2RGB))
+plt.title("Translated Image")
 plt.axis('off')
-print("Input Image:")
-plt.imshow(input_image)
-plt.show()
-rows,cols,dim=input_image.shape
-M=np.float32([[1,0,100],[0,1,200],[0,0,1]])
-translated_image=cv2.warpPerspective(input_image,M,(cols,rows))
-plt.axis('off')
-print("Image Translation:")
-plt.imshow(translated_image)
-plt.show()
 ```
 ii) Image Scaling
 ```
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-input_image=cv2.imread('flower.jpg')
-input_image=cv2.cvtColor(input_image,cv2.COLOR_BGR2RGB)
+fx, fy = 5.0, 2.0 # Scaling factors (1.5x scaling for both width and height)
+scaled_image = cv2.resize(image, None, fx=fx, fy=fy, interpolation=cv2.INTER_LINEAR)
+plt.imshow(cv2.cvtColor(scaled_image, cv2.COLOR_BGR2RGB)) # Display the scaled image
+plt.title("Scaled Image") # Set title
 plt.axis('off')
-print("Input Image:")
-plt.imshow(input_image)
-plt.show()
-rows,cols,dim=input_image.shape
-M=np.float32([[1.5,0,0],[0,1.8,0],[0,0,1]])
-translated_image=cv2.warpPerspective(input_image,M,(cols*2,rows*2))
-plt.axis('off')
-print("Image Scaling:")
-plt.imshow(translated_image)
-plt.show()
 ```
 iii)Image shearing
 ```
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-input_image=cv2.imread('flower.jpg')
-input_image=cv2.cvtColor(input_image,cv2.COLOR_BGR2RGB)
+shear_matrix = np.float32([[1, 0.5, 0], [0.5, 1, 0]]) # Shearing matrix
+# The matrix shears the image by a factor of 0.5 in both x and y directions
+# [1, 0.5, 0] - Shear along the x-axis (horizontal)
+# [0.5, 1, 0] - Shear along the y-axis (vertical)
+sheared_image = cv2.warpAffine(image, shear_matrix, (image.shape[1], image.shape[0]))
+plt.imshow(cv2.cvtColor(sheared_image, cv2.COLOR_BGR2RGB)) # Display the sheared image
+plt.title("Sheared Image") # Set title
 plt.axis('off')
-print("Input Image:")
-plt.imshow(input_image)
-plt.show()
-rows,cols,dim=input_image.shape
-M1=np.float32([[1,0.5,0],[0,1,0],[0,0,1]])
-M2=np.float32([[1,0,0],[0.5,1,0],[0,0,1]])
-translated_image1=cv2.warpPerspective(input_image,M1,(int(cols*1.5),int(rows*1.5)))
-translated_image2=cv2.warpPerspective(input_image,M2,(int(cols*1.5),int(rows*1.5)))
-plt.axis('off')
-print("Image Shearing:")
-plt.imshow(translated_image1)
-plt.imshow(translated_image2)
-plt.show()
 ```
 
 iv)Image Reflection
 ```
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-input_image=cv2.imread('flower.jpg')
-input_image=cv2.cvtColor(input_image,cv2.COLOR_BGR2RGB)
+reflected_image = cv2.flip(image, 2)
+plt.imshow(cv2.cvtColor(reflected_image, cv2.COLOR_BGR2RGB)) # Display the reflected image
+plt.title("Reflected Image") # Set title
 plt.axis('off')
-print("Input Image:")
-plt.imshow(input_image)
-plt.show()
-rows,cols,dim=input_image.shape
-M1=np.float32([[1,0,0],[0,-1,rows],[0,0,1]])
-M2=np.float32([[-1,0,cols],[0,1,0],[0,0,1]])
-translated_image1=cv2.warpPerspective(input_image,M1,(int(cols),int(rows)))
-translated_image2=cv2.warpPerspective(input_image,M2,(int(cols),int(rows)))
-plt.axis('off')
-print("Image Reflection:")
-plt.imshow(translated_image1)
-plt.imshow(translated_image2)
-plt.show()
 ```
 
 v)Image Rotation
 ```
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-input_image=cv2.imread('flower.jpg')
-input_image=cv2.cvtColor(input_image,cv2.COLOR_BGR2RGB)
+(height, width) = image.shape[:2] # Get the image height and width
+angle = 45 # Rotation angle in degrees (rotate by 45 degrees)
+center = (width // 2, height // 2) # Set the center of rotation to the image center
+M_rotation = cv2.getRotationMatrix2D(center, angle, 1) # Get the rotation matrix
+# getRotationMatrix2D: Takes the center of rotation, angle, and scale factor (1 means no scaling
+rotated_image = cv2.warpAffine(image, M_rotation, (width, height)) # Apply rotation
+plt.imshow(cv2.cvtColor(rotated_image, cv2.COLOR_BGR2RGB)) # Display the rotated image
+plt.title("Rotated Image") # Set title
 plt.axis('off')
-print("Input Image:")
-plt.imshow(input_image)
-plt.show()
-rows,cols,dim=input_image.shape
-angle=np.radians(10)
-M=np.float32([[np.cos(angle),-(np.sin(angle)),0],[np.sin(angle),np.cos(angle),0],[0,0,1]])
-translated_image=cv2.warpPerspective(input_image,M,(int(cols),int(rows)))
-plt.axis('off')
-print("Image Rotation:")
-plt.imshow(translated_image)
-plt.show()
 ```
 
 vi)Image Cropping
 ```
-import cv2
-import matplotlib.pyplot as plt
-image = cv2.imread("flower.jpg")
-h, w, _ = image.shape
-cropped_face = image[int(h*0.2):int(h*0.8), int(w*0.3):int(w*0.7)]
-cv2.imwrite("cropped_pigeon_face.jpg", cropped_face)
-plt.imshow(cv2.cvtColor(cropped_face, cv2.COLOR_BGR2RGB))
-plt.axis("off")
-plt.show()
+x, y, w, h = 100, 100, 200, 150 # Define the top-left corner (x, y) and the width (w) and heigh
+# Cropping the image from coordinates (x, y) to (x+w, y+h)
+cropped_image = image[y:y+h, x:x+w]
+plt.imshow(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB)) # Display the cropped image
+plt.title("Cropped Image") # Set title
+plt.axis('off')
 ```
 
 ## Output:
-<img width="556" height="373" alt="image" src="https://github.com/user-attachments/assets/00167a54-3139-461c-95e6-af5c5b8ff447" />
-<img width="561" height="394" alt="image" src="https://github.com/user-attachments/assets/17709b2c-9b1f-4b41-97a4-6c68d628bf99" />
-<img width="552" height="167" alt="image" src="https://github.com/user-attachments/assets/65fcf73a-04e0-4393-845e-269ef5efab23" />
-<img width="561" height="394" alt="image" src="https://github.com/user-attachments/assets/98c3a6be-c2e8-42f3-a4a8-366df593c6ab" />
-<img width="497" height="338" alt="image" src="https://github.com/user-attachments/assets/d7d6f0d3-d779-4423-8cf6-b3e38ff37c23" />
-<img width="515" height="349" alt="image" src="https://github.com/user-attachments/assets/24fe178e-479b-4329-88da-0861354d34af" />
-<img width="515" height="370" alt="image" src="https://github.com/user-attachments/assets/bcb7f4ae-e315-4f4e-a857-ddb0bbcda7b6" />
+### i)Image Translation
+<img width="737" height="543" alt="image" src="https://github.com/user-attachments/assets/ecc3df2d-8b4c-4336-ab11-3a0236a19860" />
+
+
+### ii) Image Scaling
+
+<img width="756" height="456" alt="image" src="https://github.com/user-attachments/assets/1409f87b-b945-49d5-bc61-9fed77be1113" />
+
+
+### iii)Image shearing
+
+<img width="739" height="539" alt="image" src="https://github.com/user-attachments/assets/576f5a16-3458-4266-87c5-b7e2471fbae7" />
+
+### iv)Image Reflection
+
+<img width="748" height="541" alt="image" src="https://github.com/user-attachments/assets/83b52e47-fb92-4d79-be7e-2cbf4b4b69e3" />
+
+
+### v)Image Rotation
+
+<img width="740" height="541" alt="image" src="https://github.com/user-attachments/assets/37491230-072c-4cc1-adc6-76b1cfaacef4" />
+
+
+### vi)Image Cropping
+
+<img width="719" height="532" alt="image" src="https://github.com/user-attachments/assets/c304f720-2e91-4bae-886b-07ec866a239c" />
+
 
 ## Result: 
 
